@@ -1,0 +1,124 @@
+﻿@model SupplyManagements.Models.Vendor
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Vendor</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CompanyId" class="control-label">Company Name</label>
+                <select asp-for="CompanyId" class="form-control" id="companyDropdown">
+                    <option value="">-- Pilih Company --</option>
+                </select>
+                <span asp-validation-for="CompanyId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BusinessField" class="control-label">Business Field</label>
+                <input asp-for="BusinessField" class="form-control" />
+                <span asp-validation-for="BusinessField" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompanyType" class="control-label">Company Type</label>
+                <input asp-for="CompanyType" class="form-control" />
+                <span asp-validation-for="CompanyType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApprovalDate" class="control-label">Approval Date</label>
+                <input asp-for="ApprovalDate" class="form-control" />
+                <span asp-validation-for="ApprovalDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApprovedByAdminId" class="control-label">Admin Approver Name</label>
+                <select asp-for="ApprovedByAdminId" class="form-control" id="userDropdown">
+                    <option value="">-- Pilih Users --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApprovedByLogisticManagerId" class="control-label">Admin Logistics Name</label>
+                <select asp-for="ApprovedByLogisticManagerId" class="form-control" id="userDropdown2">
+                    <option value="">-- Pilih Users --</option>
+                </select>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsActive" /> @Html.DisplayNameFor(model => model.IsActive)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                url: '/list-company',
+                type: 'GET',
+                success: function(data) {
+                    const dropdown = $('#companyDropdown');
+
+                    dropdown.find('option:not(:first)').remove();
+
+                    $.each(data, function(index, company) {
+                        dropdown.append($('<option></option>').attr('value', company.id).text(company.name));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading companies:', error);
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $.ajax({
+                url: '/list-users',
+                type: 'GET',
+                success: function(data) {
+                    const dropdown = $('#userDropdown');
+
+                    dropdown.find('option:not(:first)').remove();
+
+                    $.each(data, function(index, user) {
+                        dropdown.append($('<option></option>').attr('value', user.id).text(user.fullName));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading companies:', error);
+                }
+            });
+        });
+        $(document).ready(function() {
+            $.ajax({
+                url: '/list-users',
+                type: 'GET',
+                success: function(data) {
+                    const dropdown = $('#userDropdown2');
+
+                    dropdown.find('option:not(:first)').remove();
+
+                    $.each(data, function(index, user) {
+                        dropdown.append($('<option></option>').attr('value', user.id).text(user.fullName));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading companies:', error);
+                }
+            });
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
