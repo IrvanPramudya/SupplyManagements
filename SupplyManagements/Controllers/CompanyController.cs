@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SupplyManagements.Data;
 using SupplyManagements.DTO.Companies;
@@ -128,6 +129,13 @@ namespace SupplyManagements.Controllers
         }
         public IActionResult Create()
         {
+            ViewBag.StatusList = Enum.GetValues(typeof(StatusSelection))
+                                   .Cast<StatusSelection>()
+                                   .Select(e => new SelectListItem
+                                   {
+                                       Value = e.ToString(),
+                                       Text = e.ToString()
+                                   }).ToList();
             return View();
         }
     }
