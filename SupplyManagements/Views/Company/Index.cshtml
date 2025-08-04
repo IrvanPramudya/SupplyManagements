@@ -25,7 +25,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-action="Details" asp-route-id="@item.Id">@item.Name</a>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Email)
@@ -36,7 +36,7 @@
                 <td align="center">
                     @if (!string.IsNullOrEmpty(item.Logo))
                     {
-                        <img src="~/@item.Logo" alt="Logo @item.Name" class="img-thumbnail" style="max-width: 250px; max-height: 250px;" />
+                        <img src="~/@item.Logo" alt="Logo @item.Name" class="img-thumbnail" style="max-width: 150px; max-height: 150px;" />
                     }
                     else
                     {
@@ -50,17 +50,99 @@
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a href="#" onclick="deleteItem(@item.Id)" style="color: red;">Delete</a>
+                    <a href="#" class="btn btn-sm btn-outline-primary"
+                       data-bs-toggle="modal"
+                       data-bs-target="#statusModal"
+                       data-company-id="@item.Id"
+                       data-current-status="@item.Status">
+                        Change Status
+                    </a>
+                    <a href="#" onclick="deleteItem(@item.Id)" class="btn btn-sm btn-outline-danger">Delete</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
 
+<!-- Status Change Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UpdateStatus" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Change Company Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="companyId" name="id" />
+                    <div class="mb-3">
+                        <label for="newStatus" class="form-label">Select New Status</label>
+                        <select class="form-select" id="newStatus" name="newStatus" required>
+                            <option value="">-- Select Status --</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var statusModal = document.getElementById('statusModal');
+
+            if (statusModal) {
+                statusModal.addEventListener('show.bs.modal', function(event) {
+                    
+                    var button = event.relatedTarget;
+
+                    
+                    var companyId = button.getAttribute('data-company-id');
+                    var currentStatus = button.getAttribute('data-current-status');
+
+                    
+                    var modalTitle = statusModal.querySelector('.modal-title');
+                    var companyIdInput = statusModal.querySelector('#companyId');
+                    var currentStatusDisplay = statusModal.querySelector('#currentStatusDisplay');
+                    var statusSelect = statusModal.querySelector('#newStatus');
+
+                    companyIdInput.value = companyId;
+                    currentStatusDisplay.textContent = currentStatus;
+
+                    
+                    Array.from(statusSelect.options).forEach(option => {
+                        option.selected = option.value === currentStatus;
+                    });
+                });
+            }
+            $('#statusModal form').submit(function(e) {
+                e.preventDefault();
+                var form = $(this);
+
+                $.ajax({
+                    url: form.attr('action'),
+                    method: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        var modal = bootstrap.Modal.getInstance($('#statusModal')[0]);
+                        modal.hide();
+
+                        location.reload();
+                    },
+                    error: function() {
+                        alert('Failed to update status');
+                    }
+                });
+            });
+        });
             function deleteItem(id) {
             if (confirm("Are you sure you want to delete this?")) {
                 fetch(`/Company/Delete/${id}`, {

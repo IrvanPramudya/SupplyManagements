@@ -18,6 +18,10 @@ namespace SupplyManagements.Controllers
         {
             _context = context;
         }
+        public IEnumerable<ApplicationUser> GetUserData()
+        {
+            return _context.Set<ApplicationUser>().ToList();
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -74,16 +78,16 @@ namespace SupplyManagements.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ApplicationUserDto applicationUser)
         {
-            applicationUser.Id = GenerateCustomId();
-            if (applicationUser.Id != null)
+            ApplicationUser createData = applicationUser;
+            if (createData.Id!= null)
             {
-                _context.Add((ApplicationUser)applicationUser);
+                _context.Add(createData);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(applicationUser);
         }
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null || _context.ApplicationUser == null)
             {
@@ -104,14 +108,15 @@ namespace SupplyManagements.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("id", "FullName", "UserName", "Email", "PhoneNumber", "Password")] ApplicationUserDto applicationUser)
+        public async Task<IActionResult> Edit(string id, ApplicationUserDto applicationUser)
         {
             if (id != applicationUser.Id) { return NotFound(id); }
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(applicationUser);
+                    ApplicationUser updateData = applicationUser;
+                    _context.Update(updateData);
                     await _context.SaveChangesAsync();
                 }
                 catch (Exception)
@@ -130,7 +135,7 @@ namespace SupplyManagements.Controllers
             return View(applicationUser);
         }
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {
@@ -157,11 +162,6 @@ namespace SupplyManagements.Controllers
         public IActionResult Create()
         {
             return View();
-        }
-
-        private string GenerateCustomId()
-        {
-            return $"USER-{DateTime.Now:yyyyMMddHHmmss}-{new Random().Next(1000, 9999)}";
         }
     }
 }

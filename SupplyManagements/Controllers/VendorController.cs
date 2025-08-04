@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SupplyManagements.Data;
+using SupplyManagements.DTO.AppsUsers;
+using SupplyManagements.DTO.Companies;
+using SupplyManagements.DTO.Vendors;
 using SupplyManagements.Models;
 
 namespace SupplyManagements.Controllers
@@ -17,9 +20,31 @@ namespace SupplyManagements.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var _vendor = await _context.Vendor.OrderByDescending(x => x.VendorId).ToListAsync();
-            //if(_vendor.Count <1)await
-            return _context.Vendor != null ? View(_vendor) : Problem("Entity set 'ApplicationDbContext'");
+            var getAllData = await (from vendor in _context.Vendor
+                                    join company in _context.Company on vendor.CompanyId equals company.Id
+                                    join user in _context.ApplicationUser on vendor.ApprovedByAdminId equals user.Id
+                                    select new ListVendorDto
+                                    {
+                                        VendorId = vendor.VendorId,
+                                        CompanyName = company.Name,
+                                        AdminName = user.FullName,
+                                        LogisticManagerName = user.FullName,
+                                        ApprovalDate = vendor.ApprovalDate,
+                                        BusinessField = vendor.BusinessField,
+                                        CompanyType = vendor.CompanyType,
+                                        IsActive = vendor.IsActive,
+                                    }).ToListAsync();
+
+            if (!getAllData.Any())
+            {
+                return NotFound();
+            }
+
+            return View(getAllData);
+        }
+        public IEnumerable<Vendor> GetVendorData()
+        {
+            return _context.Set<Vendor>().ToList();
         }
         public async Task<IActionResult> Details(int? id)
         {

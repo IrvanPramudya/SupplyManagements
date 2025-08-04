@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SupplyManagements.Models.Vendor>
+﻿@model IEnumerable<SupplyManagements.DTO.Vendors.ListVendorDto>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Company)
+                @Html.DisplayNameFor(model => model.CompanyName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.BusinessField)
@@ -25,10 +25,10 @@
                 @Html.DisplayNameFor(model => model.ApprovalDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ApprovedByAdmin)
+                @Html.DisplayNameFor(model => model.AdminName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ApprovedByLogisticManager)
+                @Html.DisplayNameFor(model => model.LogisticManagerName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsActive)
@@ -40,7 +40,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Company.Id)
+                @Html.DisplayFor(modelItem => item.CompanyName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.BusinessField)
@@ -52,10 +52,10 @@
                 @Html.DisplayFor(modelItem => item.ApprovalDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ApprovedByAdmin.Id)
+                @Html.DisplayFor(modelItem => item.AdminName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ApprovedByLogisticManager.Id)
+                @Html.DisplayFor(modelItem => item.LogisticManagerName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsActive)

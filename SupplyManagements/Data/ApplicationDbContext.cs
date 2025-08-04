@@ -16,7 +16,7 @@ namespace SupplyManagements.Data
         public DbSet<Company> Company { get; set; }
         public DbSet<Vendor> Vendor{ get; set; }
         public DbSet<ApplicationUser> ApplicationUser{ get; set; }
-        public DbSet<SupplyManagements.DTO.AppsUsers.ApplicationUserDto> ApplicationUserDto { get; set; } = default!;
+        public DbSet<SupplyManagements.DTO.AppsUsers.ApplicationUserDto> ApplicationUserDto { get; set; } =     default!;
 
     }
 }

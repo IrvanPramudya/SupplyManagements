@@ -17,7 +17,7 @@ namespace SupplyManagements.DTO.AppsUsers
         {
             return new ApplicationUser
             {
-                Id =applicationUser.Id,
+                Id = (new Random().Next(1000, 9999)).ToString(),
                 UserName = applicationUser.UserName,
                 FullName = applicationUser.FullName,
                 PasswordHash = applicationUser.Password,

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SupplyManagements.Data;
 using SupplyManagements.DTO.Companies;
 using SupplyManagements.Models;
+using System.Collections;
 using System.Diagnostics;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -17,11 +18,36 @@ namespace SupplyManagements.Controllers
         {
             _context = context;
         }
+        // CompaniesController.cs
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStatus(int id, StatusSelection newStatus)
+        {
+            var company = await _context.Company.FindAsync(id);
+            if (company == null)
+            {
+                return NotFound();
+            }
 
+            company.Status = newStatus;
+            _context.Update(company);
+            await _context.SaveChangesAsync();
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Ok();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
         public async Task<IActionResult> Index()
         {
             var _company = await _context.Company.OrderByDescending(x => x.Id).ToListAsync();
             return _context.Company != null ? View(_company) : Problem("Entity set 'ApplicationDbContext'");
+        }
+        public  IEnumerable<Company> GetCompanyData()
+        {
+            return _context.Set<Company>().Where(x=>x.Status.Equals(StatusSelection.Approved)).ToList();
         }
         [HttpGet("/list-company")]
         public async Task<IActionResult> GetAllCompany()

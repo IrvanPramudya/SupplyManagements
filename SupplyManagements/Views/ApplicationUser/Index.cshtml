@@ -45,7 +45,7 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a href="#" onclick="deleteItem(@item.Id)" style="color: red;">Delete</a>
+                    <a href="#" onclick="deleteUserItem(@item.Id)" style="color: red;">Delete</a>
             </td>
         </tr>
 }
@@ -53,7 +53,7 @@
 </table>
 @section Scripts {
     <script>
-            function deleteItem(id) {
+            function deleteUserItem(id) {
             if (confirm("Are you sure you want to delete this?")) {
                 fetch(`/ApplicationUser/Delete/${id}`, {
                     method: 'DELETE'
