@@ -1,4 +1,4 @@
-﻿@model SupplyManagements.Models.Company
+﻿@model SupplyManagements.DTO.Companies.CompanyEditDto
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,9 +10,10 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ExistingLogoPath" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -30,21 +31,22 @@
             </div>
             <div class="form-group">
                 <label asp-for="Logo" class="control-label"></label>
-                <input asp-for="Logo" class="form-control" />
+                <input asp-for="Logo" type="file" class="form-control" accept="image/*" />
                 <span asp-validation-for="Logo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RegistrationDate" class="control-label"></label>
-                <input asp-for="RegistrationDate" class="form-control" />
-                <span asp-validation-for="RegistrationDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status"
-                        asp-items="Html.GetEnumSelectList<StatusSelection>()"
-                        class="form-control">
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
+
+                @if (!string.IsNullOrEmpty(Model.ExistingLogoPath))
+                {
+                    <div class="mt-2">
+                        <label>Current Logo:</label>
+                        <img src="~/@Model.ExistingLogoPath" alt="Current Logo" class="img-thumbnail" style="max-height: 200px;" />
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="removeLogo" name="removeLogo" value="true">
+                            <label class="form-check-label" for="removeLogo">
+                                Remove current logo
+                            </label>
+                        </div>
+                    </div>
+                }
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
